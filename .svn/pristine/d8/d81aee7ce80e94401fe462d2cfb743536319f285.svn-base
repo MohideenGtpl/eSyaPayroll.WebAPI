@@ -1,0 +1,11 @@
+﻿using eSyaPayroll.IF;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaPayroll.DL.Repository
+{
+   public class VariableEntryRepository: IVariableEntryRepository
+    {
+    }
+}

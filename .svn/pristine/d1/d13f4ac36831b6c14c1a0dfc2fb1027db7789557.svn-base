@@ -1,0 +1,785 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+
+namespace eSyaPayroll.DL.Entities
+{
+    public partial class eSyaEnterprise : DbContext
+    {
+        public static string _connString = "";
+        public eSyaEnterprise()
+        {
+        }
+
+        public eSyaEnterprise(DbContextOptions<eSyaEnterprise> options)
+            : base(options)
+        {
+        }
+
+        public virtual DbSet<GtEbeemc> GtEbeemc { get; set; }
+        public virtual DbSet<GtEcapcd> GtEcapcd { get; set; }
+        public virtual DbSet<GtEcbsln> GtEcbsln { get; set; }
+        public virtual DbSet<GtEccncd> GtEccncd { get; set; }
+        public virtual DbSet<GtEpercd> GtEpercd { get; set; }
+        public virtual DbSet<GtEpyebi> GtEpyebi { get; set; }
+        public virtual DbSet<GtEpyeci> GtEpyeci { get; set; }
+        public virtual DbSet<GtEpyecj> GtEpyecj { get; set; }
+        public virtual DbSet<GtEpyeei> GtEpyeei { get; set; }
+        public virtual DbSet<GtEpyefd> GtEpyefd { get; set; }
+        public virtual DbSet<GtEpyefi> GtEpyefi { get; set; }
+        public virtual DbSet<GtEpyeln> GtEpyeln { get; set; }
+        public virtual DbSet<GtEpyemc> GtEpyemc { get; set; }
+        public virtual DbSet<GtEpyemh> GtEpyemh { get; set; }
+        public virtual DbSet<GtEpyems> GtEpyems { get; set; }
+        public virtual DbSet<GtEpyepe> GtEpyepe { get; set; }
+        public virtual DbSet<GtEpyepi> GtEpyepi { get; set; }
+        public virtual DbSet<GtEpyesd> GtEpyesd { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer(_connString);
+            }
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+
+            modelBuilder.Entity<GtEbeemc>(entity =>
+            {
+                entity.HasKey(e => e.EmployeeClass);
+
+                entity.ToTable("GT_EBEEMC");
+
+                entity.Property(e => e.EmployeeClass).ValueGeneratedNever();
+
+                entity.Property(e => e.ClassDesc)
+                    .IsRequired()
+                    .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtEcapcd>(entity =>
+            {
+                entity.HasKey(e => e.ApplicationCode)
+                    .HasName("PK_GT_ECAPCD_1");
+
+                entity.ToTable("GT_ECAPCD");
+
+                entity.Property(e => e.ApplicationCode).ValueGeneratedNever();
+
+                entity.Property(e => e.CodeDesc)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.ShortCode).HasMaxLength(15);
+            });
+
+            modelBuilder.Entity<GtEcbsln>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessId, e.SegmentId, e.LocationId });
+
+                entity.ToTable("GT_ECBSLN");
+
+                entity.HasIndex(e => e.BusinessKey)
+                    .HasName("IX_GT_ECBSLN")
+                    .IsUnique();
+
+                entity.Property(e => e.BusinessId).HasColumnName("BusinessID");
+
+                entity.Property(e => e.SegmentId).HasColumnName("SegmentID");
+
+                entity.Property(e => e.LocationId).HasColumnName("LocationID");
+
+                entity.Property(e => e.BusinessName)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.EActiveUsers)
+                    .IsRequired()
+                    .HasColumnName("eActiveUsers");
+
+                entity.Property(e => e.EBusinessKey)
+                    .IsRequired()
+                    .HasColumnName("eBusinessKey");
+
+                entity.Property(e => e.ESyaLicenseType)
+                    .IsRequired()
+                    .HasColumnName("eSyaLicenseType")
+                    .HasMaxLength(1)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EUserLicenses)
+                    .IsRequired()
+                    .HasColumnName("eUserLicenses");
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LocationCode)
+                    .IsRequired()
+                    .HasMaxLength(6);
+
+                entity.Property(e => e.LocationDescription)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.TocurrConversion).HasColumnName("TOCurrConversion");
+
+                entity.Property(e => e.TolocalCurrency)
+                    .IsRequired()
+                    .HasColumnName("TOLocalCurrency")
+                    .HasDefaultValueSql("((1))");
+
+                entity.Property(e => e.TorealCurrency).HasColumnName("TORealCurrency");
+            });
+
+            modelBuilder.Entity<GtEccncd>(entity =>
+            {
+                entity.HasKey(e => e.Isdcode);
+
+                entity.ToTable("GT_ECCNCD");
+
+                entity.Property(e => e.Isdcode)
+                    .HasColumnName("ISDCode")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CountryCode)
+                    .IsRequired()
+                    .HasMaxLength(4);
+
+                entity.Property(e => e.CountryFlag)
+                    .IsRequired()
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.CountryName)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CurrencyCode)
+                    .IsRequired()
+                    .HasMaxLength(4);
+
+                entity.Property(e => e.DateFormat)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IsPinapplicable).HasColumnName("IsPINApplicable");
+
+                entity.Property(e => e.IsPoboxApplicable).HasColumnName("IsPOBoxApplicable");
+
+                entity.Property(e => e.MobileNumberPattern)
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.Nationality).HasMaxLength(50);
+
+                entity.Property(e => e.PincodePattern)
+                    .HasColumnName("PINcodePattern")
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.PoboxPattern)
+                    .HasColumnName("POBoxPattern")
+                    .HasMaxLength(25)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ShortDateFormat)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Uidlabel)
+                    .HasColumnName("UIDLabel")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Uidpattern)
+                    .HasColumnName("UIDPattern")
+                    .HasMaxLength(25);
+            });
+
+            modelBuilder.Entity<GtEpercd>(entity =>
+            {
+                entity.HasKey(e => e.Ercode);
+
+                entity.ToTable("GT_EPERCD");
+
+                entity.Property(e => e.Ercode)
+                    .HasColumnName("ERCode")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Erdesc)
+                    .IsRequired()
+                    .HasColumnName("ERDesc")
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<GtEpyebi>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.EmployeeNumber, e.AccountNumber });
+
+                entity.ToTable("GT_EPYEBI");
+
+                entity.Property(e => e.AccountNumber).HasMaxLength(25);
+
+                entity.Property(e => e.BankBranch)
+                    .IsRequired()
+                    .HasMaxLength(25);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Ifsccode)
+                    .IsRequired()
+                    .HasColumnName("IFSCCode")
+                    .HasMaxLength(25);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.HasOne(d => d.GtEpyemh)
+                    .WithMany(p => p.GtEpyebi)
+                    .HasForeignKey(d => new { d.BusinessKey, d.EmployeeNumber })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_GT_EPYEBI_GT_EPYEMH");
+            });
+
+            modelBuilder.Entity<GtEpyeci>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.EmployeeNumber, e.PermanentOrCurrent });
+
+                entity.ToTable("GT_EPYECI");
+
+                entity.Property(e => e.PermanentOrCurrent)
+                    .HasMaxLength(1)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Address)
+                    .IsRequired()
+                    .HasMaxLength(150);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LandLineNumber)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.Pincode)
+                    .IsRequired()
+                    .HasMaxLength(6)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<GtEpyecj>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.EmployeeNumber, e.FromDate });
+
+                entity.ToTable("GT_EPYECJ");
+
+                entity.Property(e => e.FromDate).HasColumnType("datetime");
+
+                entity.Property(e => e.AdministrativeReportingTo).HasMaxLength(50);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FunctionalReportingTo).HasMaxLength(50);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.TillDate).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<GtEpyeei>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.EmployeeNumber, e.EducationLevel });
+
+                entity.ToTable("GT_EPYEEI");
+
+                entity.Property(e => e.EducationLevel).HasMaxLength(75);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Institution)
+                    .IsRequired()
+                    .HasMaxLength(75);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.PercentageofMarks).HasColumnType("numeric(5, 2)");
+
+                entity.Property(e => e.University)
+                    .IsRequired()
+                    .HasMaxLength(75);
+
+                entity.Property(e => e.YearofPassing).HasColumnType("numeric(4, 0)");
+            });
+
+            modelBuilder.Entity<GtEpyefd>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.EmployeeNumber, e.Ercode });
+
+                entity.ToTable("GT_EPYEFD");
+
+                entity.Property(e => e.Ercode).HasColumnName("ERCode");
+
+                entity.Property(e => e.Amount).HasColumnType("numeric(18, 6)");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.NoOfinstallment).HasColumnName("NoOFInstallment");
+
+                entity.Property(e => e.PaidAmount).HasColumnType("numeric(18, 6)");
+
+                entity.Property(e => e.ReferenceDetail).HasMaxLength(50);
+
+                entity.Property(e => e.Status)
+                    .IsRequired()
+                    .HasMaxLength(1)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.GtEpyemh)
+                    .WithMany(p => p.GtEpyefd)
+                    .HasForeignKey(d => new { d.BusinessKey, d.EmployeeNumber })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_GT_EPYEFD_GT_EPYEMH");
+            });
+
+            modelBuilder.Entity<GtEpyefi>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.EmployeeNumber });
+
+                entity.ToTable("GT_EPYEFI");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FatherName)
+                    .IsRequired()
+                    .HasMaxLength(75);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.MotherName)
+                    .IsRequired()
+                    .HasMaxLength(75);
+
+                entity.Property(e => e.SpouseName).HasMaxLength(75);
+
+                entity.HasOne(d => d.GtEpyemh)
+                    .WithOne(p => p.GtEpyefi)
+                    .HasForeignKey<GtEpyefi>(d => new { d.BusinessKey, d.EmployeeNumber })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_GT_EPYEFI_GT_EPYEMH");
+            });
+
+            modelBuilder.Entity<GtEpyeln>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.EmployeeNumber, e.Language });
+
+                entity.ToTable("GT_EPYELN");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.HasOne(d => d.GtEpyemh)
+                    .WithMany(p => p.GtEpyeln)
+                    .HasForeignKey(d => new { d.BusinessKey, d.EmployeeNumber })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_GT_EPYELN_GT_EPYEMH");
+            });
+
+            modelBuilder.Entity<GtEpyemc>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.EmployeeNumber });
+
+                entity.ToTable("GT_EPYEMC");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.DateProbationTill).HasColumnType("datetime");
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.HasOne(d => d.GtEpyemh)
+                    .WithOne(p => p.GtEpyemc)
+                    .HasForeignKey<GtEpyemc>(d => new { d.BusinessKey, d.EmployeeNumber })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_GT_EPYEMC_GT_EPYEMH");
+            });
+
+            modelBuilder.Entity<GtEpyemh>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.EmployeeNumber });
+
+                entity.ToTable("GT_EPYEMH");
+
+                entity.Property(e => e.BiometricId)
+                    .HasColumnName("BiometricID")
+                    .HasMaxLength(15);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.EmployeeId)
+                    .IsRequired()
+                    .HasColumnName("EmployeeID")
+                    .HasMaxLength(15);
+
+                entity.Property(e => e.EmployeeName)
+                    .IsRequired()
+                    .HasMaxLength(75);
+
+                entity.Property(e => e.EmployeeStatus)
+                    .IsRequired()
+                    .HasMaxLength(1)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Gender)
+                    .IsRequired()
+                    .HasMaxLength(1)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.MobileNumber)
+                    .IsRequired()
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.Photo).HasColumnType("image");
+
+                entity.Property(e => e.Title)
+                    .IsRequired()
+                    .HasMaxLength(4)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<GtEpyems>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.EmployeeNumber });
+
+                entity.ToTable("GT_EPYEMS");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.CurrentBasic).HasColumnType("numeric(18, 6)");
+
+                entity.Property(e => e.CurrentGross).HasColumnType("numeric(18, 6)");
+
+                entity.Property(e => e.DateOfConfirmation).HasColumnType("datetime");
+
+                entity.Property(e => e.DateOfJoining).HasColumnType("datetime");
+
+                entity.Property(e => e.DateOfRelieving).HasColumnType("datetime");
+
+                entity.Property(e => e.DateOfResignation).HasColumnType("datetime");
+
+                entity.Property(e => e.DateOfTermination).HasColumnType("datetime");
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.HasOne(d => d.GtEpyemh)
+                    .WithOne(p => p.GtEpyems)
+                    .HasForeignKey<GtEpyems>(d => new { d.BusinessKey, d.EmployeeNumber })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_GT_EPYEMS_GT_EPYEMH");
+            });
+
+            modelBuilder.Entity<GtEpyepe>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.EmployeeNumber, e.Organization });
+
+                entity.ToTable("GT_EPYEPE");
+
+                entity.Property(e => e.Organization).HasMaxLength(75);
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Designation)
+                    .IsRequired()
+                    .HasMaxLength(25);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.Property(e => e.ReasonforLeaving).HasMaxLength(100);
+
+                entity.Property(e => e.ServicePeriodFrom).HasColumnType("datetime");
+
+                entity.Property(e => e.ServicePeriodTill).HasColumnType("datetime");
+
+                entity.HasOne(d => d.GtEpyemh)
+                    .WithMany(p => p.GtEpyepe)
+                    .HasForeignKey(d => new { d.BusinessKey, d.EmployeeNumber })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_GT_EPYEPE_GT_EPYEMH");
+            });
+
+            modelBuilder.Entity<GtEpyepi>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.EmployeeNumber });
+
+                entity.ToTable("GT_EPYEPI");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.DateOfBirth).HasColumnType("datetime");
+
+                entity.Property(e => e.EmployeeUniqueId).HasColumnName("EmployeeUniqueID");
+
+                entity.Property(e => e.EmployeeUniqueInfo).HasMaxLength(15);
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.HasOne(d => d.GtEpyemh)
+                    .WithOne(p => p.GtEpyepi)
+                    .HasForeignKey<GtEpyepi>(d => new { d.BusinessKey, d.EmployeeNumber })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_GT_EPYEPI_GT_EPYEMH");
+            });
+
+            modelBuilder.Entity<GtEpyesd>(entity =>
+            {
+                entity.HasKey(e => new { e.BusinessKey, e.EmployeeNumber, e.Ercode, e.EffectiveFrom });
+
+                entity.ToTable("GT_EPYESD");
+
+                entity.Property(e => e.Ercode).HasColumnName("ERCode");
+
+                entity.Property(e => e.EffectiveFrom).HasColumnType("datetime");
+
+                entity.Property(e => e.Amount).HasColumnType("numeric(18, 6)");
+
+                entity.Property(e => e.CreatedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedTerminal)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.EffectiveTill).HasColumnType("datetime");
+
+                entity.Property(e => e.FormId)
+                    .IsRequired()
+                    .HasColumnName("FormID")
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ModifiedOn).HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedTerminal).HasMaxLength(50);
+
+                entity.HasOne(d => d.GtEpyemh)
+                    .WithMany(p => p.GtEpyesd)
+                    .HasForeignKey(d => new { d.BusinessKey, d.EmployeeNumber })
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_GT_EPYESD_GT_EPYEMH");
+            });
+        }
+    }
+}

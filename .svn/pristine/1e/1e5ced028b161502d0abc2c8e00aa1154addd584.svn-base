@@ -1,0 +1,58 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaPayroll.DO;
+using eSyaPayroll.IF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaPayroll.WebAPI.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class EmployeeController : ControllerBase
+    {
+        private readonly IEmployeeRepository _EmployeeRepository;
+        public EmployeeController(IEmployeeRepository EmployeeRepository)
+        {
+            _EmployeeRepository = EmployeeRepository;
+        }
+
+        #region Employee Details Information
+        /// <summary>
+        /// Getting  Employee Details Info.
+        /// UI Reffered -Fill Grid Employee Details Info
+        /// UI Param- Alphabet
+        /// </summary>
+        [HttpGet]
+        public IActionResult GetEmployeesInfobySuffix(string Alphabet)
+        {
+            var emp_info = _EmployeeRepository.GetEmployeesInfobySuffix(Alphabet);
+            return Ok(emp_info);
+        }
+
+        /// <summary>
+        /// Getting  Employee Details Info by Employee Number.
+        /// UI Reffered - Employee Details Info
+        /// UI Param- EmpNumber
+        /// </summary>
+        [HttpGet]
+        public IActionResult GetEmployeeInfobyEmployeeNumber(int EmpNumber)
+        {
+            var emp_info = _EmployeeRepository.GetEmployeeInfobyEmployeeNumber(EmpNumber);
+            return Ok(emp_info);
+        }
+        /// <summary>
+        /// Insert Or Update Employee Details Info.
+        /// UI Reffered -Insert or Update Employee Details Info
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateEmployeeInfo(DO_EmployeeInfo obj)
+        {
+            var msg = await _EmployeeRepository.InsertOrUpdateEmployeeInfo(obj);
+            return Ok(msg);
+
+        }
+        #endregion Employee Details Information
+    }
+}

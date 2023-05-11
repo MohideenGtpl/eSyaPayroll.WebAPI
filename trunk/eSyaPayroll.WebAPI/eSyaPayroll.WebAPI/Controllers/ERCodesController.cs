@@ -1,0 +1,132 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using eSyaPayroll.DO;
+using eSyaPayroll.IF;
+namespace eSyaPayroll.WebAPI.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class ERCodesController : ControllerBase
+    {
+        private readonly IERCodesRepository _ERCodesRepository;
+        public ERCodesController(IERCodesRepository ERCodesRepository)
+        {
+            _ERCodesRepository = ERCodesRepository;
+        }
+
+        #region ER Code
+
+        /// <summary>
+        /// Getting  All ER Codes
+        /// UI Reffered -Fill Grid ER Codes
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetAllERCodes()
+        {
+            var Er_codes =await _ERCodesRepository.GetAllERCodes();
+            return Ok(Er_codes);
+        }
+
+
+        /// <summary>
+        /// Getting  ER Code by ER Code
+        /// UI Reffered - ER Codes
+        /// UI Param-ER Code
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetERCodebyERCode(int ERcode)
+        {
+            var er_code = await _ERCodesRepository.GetERCodebyERCode(ERcode);
+            return Ok(er_code);
+        }
+
+        /// <summary>
+        /// Getting  Active  ER Codes for Dropdown
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetActiveERCodes()
+        {
+            var Active_Ercodes =await _ERCodesRepository.GetActiveERCodes();
+            return Ok(Active_Ercodes);
+        }
+        /// <summary>
+        /// Insert ER Codes.
+        /// UI Reffered -Insert ER Codes
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertIntoERCodes(DO_ERCodes obj)
+        {
+            var msg = await _ERCodesRepository.InsertIntoERCodes(obj);
+            return Ok(msg);
+
+        }
+
+        /// <summary>
+        /// Update ER Codes.
+        /// UI Reffered -Update ER Codes
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> UpdateERCodes(DO_ERCodes obj)
+        {
+            var msg = await _ERCodesRepository.UpdateERCodes(obj);
+            return Ok(msg);
+
+        }
+        #endregion ER Code
+
+        #region ER Rules
+        /// <summary>
+        /// Getting  ER Rules by ER Code
+        /// UI Reffered - ER Rules
+        /// UI Param-ER Code
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetERRulesbyERCode(int ERCode)
+        {
+            var er_rules = await _ERCodesRepository.GetERRulesbyERCode(ERCode);
+            return Ok(er_rules);
+        }
+        /// <summary>
+        /// Insert OR Update ER Rules.
+        /// UI Reffered -ER Rules
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateERRules(DO_ERRules obj)
+        {
+            var msg = await _ERCodesRepository.InsertOrUpdateERRules(obj);
+            return Ok(msg);
+
+        }
+
+        #endregion ER Rules
+
+        #region ER Rates
+        /// <summary>
+        /// Getting  ER Rates by ER Code
+        /// UI Reffered - ER Rates
+        /// UI Param-ER Code
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetERRatesbyERCode(int ERCode)
+        {
+            var er_rates = await _ERCodesRepository.GetERRatesbyERCode(ERCode);
+            return Ok(er_rates);
+        }
+        /// <summary>
+        /// Insert OR Update ER Rates.
+        /// UI Reffered -ER Rates
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateERRates(DO_ERRates obj)
+        {
+            var msg = await _ERCodesRepository.InsertOrUpdateERRates(obj);
+            return Ok(msg);
+
+        }
+        #endregion ER Rates
+    }
+}

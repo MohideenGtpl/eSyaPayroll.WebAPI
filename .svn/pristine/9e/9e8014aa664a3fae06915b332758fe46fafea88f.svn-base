@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaPayroll.IF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaPayroll.WebAPI.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class EmployeeController : ControllerBase
+    {
+        private readonly IEmployeeRepository _EmployeeRepository;
+        public EmployeeController(IEmployeeRepository EmployeeRepository)
+        {
+            _EmployeeRepository = EmployeeRepository;
+        }
+
+        #region Employee Header
+        
+        #endregion Employee Header
+    }
+}

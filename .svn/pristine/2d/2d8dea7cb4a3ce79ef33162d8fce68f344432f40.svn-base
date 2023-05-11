@@ -1,0 +1,22 @@
+﻿using eSyaPayroll.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace eSyaPayroll.IF
+{
+   public interface IEmployeeRepository
+    {
+        #region Employee Details Info
+        Task<List<DO_EmployeeClass>> GetEmployeeClassforCombo();
+
+        List<DO_EmployeeInfo> GetEmployeesInfobySuffix(string Alphabet);
+
+        Task<DO_EmployeeInfo> GetEmployeeInfobyEmployeeNumber(int EmpNumber);
+
+        Task<DO_ReturnParameter> InsertOrUpdateEmployeeInfo(DO_EmployeeInfo obj);
+
+        #endregion Employee Details Info
+    }
+}

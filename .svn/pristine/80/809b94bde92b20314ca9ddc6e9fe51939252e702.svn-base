@@ -1,0 +1,208 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using eSyaPayroll.DL.Entities;
+using eSyaPayroll.DO;
+using eSyaPayroll.IF;
+using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+namespace eSyaPayroll.DL.Repository
+{
+   public class ERCodesRepository:IERCodesRepository
+    {
+        #region ER Codes
+        public async Task<List<DO_ERCodes>> GetAllERCodes()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtEpercd.Join(db.GtEperpr,
+                        x => x.Ercode,
+                        y => y.Ercode,
+                       (x, y) => new DO_ERCodes
+                       {
+                           Ercode = x.Ercode,
+                           Erdesc = x.Erdesc,
+                           ActiveStatus = x.ActiveStatus,
+                           ParameterId = y.ParameterId,
+                           ParmPerc = y.ParmPerc,
+                           ParmAction = y.ParmAction,
+                           ParmDesc = y.ParmDesc,
+                           ParmValue = y.ParmValue,
+                           ParamActiveStatus = y.ActiveStatus
+                       }).OrderBy(o => o.Erdesc).ToListAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<DO_ERCodes>> GetActiveERCodes()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtEpercd
+                        .Where(w => w.ActiveStatus)
+                        .Select(r => new DO_ERCodes
+                        {
+                            Ercode = r.Ercode,
+                            Erdesc = r.Erdesc,
+                            ActiveStatus = r.ActiveStatus
+                        }).OrderBy(o => o.Erdesc).ToListAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertIntoERCodes(DO_ERCodes obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var Ercde_Exits = db.GtEpercd.Where(w => w.Ercode == obj.Ercode).Count();
+                        if (Ercde_Exits > 0)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "ER Code is already Exists" };
+                        }
+
+                        bool is_Ercdedesc_Exist = db.GtEpercd.Any(a => a.Erdesc.ToUpper().Replace(" ", "") == obj.Erdesc.ToUpper().Replace(" ", ""));
+                        if (is_Ercdedesc_Exist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "ER Code Description is already Exists" };
+                        }
+                        var Er_code = new GtEpercd
+                        {
+                            Ercode = obj.Ercode,
+                            Erdesc = obj.Erdesc,
+                            ActiveStatus = obj.ActiveStatus,
+                            FormId = obj.FormId,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = System.DateTime.Now,
+                            CreatedTerminal = obj.TerminalID
+                        };
+                        db.GtEpercd.Add(Er_code);
+                        await db.SaveChangesAsync();
+
+                        int maxParameterId = db.GtEperpr.Where(w => w.Ercode == obj.Ercode).Select(c => c.ParameterId).DefaultIfEmpty().Max();
+                        if (maxParameterId == 0)
+                        {
+                            maxParameterId = Convert.ToInt32(obj.Ercode.ToString() + "1".PadLeft(4, '0'));
+                        }
+                        else
+                            maxParameterId = maxParameterId + 1;
+                        if (!maxParameterId.ToString().StartsWith(obj.Ercode.ToString()))
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Check Parameter Id generation." };
+                        }
+
+                        var Er_param = new GtEperpr
+                        {
+                            Ercode = obj.Ercode,
+                            ParameterId = maxParameterId,
+                            ParmPerc=obj.ParmPerc,
+                            ParmAction=obj.ParmAction,
+                            ParmDesc=obj.ParmDesc,
+                            ParmValue=obj.ParmValue,
+                            ActiveStatus = obj.ParamActiveStatus,
+                            FormId = obj.FormId,
+                            CreatedBy = obj.UserID,
+                            CreatedOn = System.DateTime.Now,
+                            CreatedTerminal = obj.TerminalID
+                        };
+                        db.GtEperpr.Add(Er_param);
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = "ER Code Created Successfully" };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateERCodes(DO_ERCodes obj)
+        {
+            using (var db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        bool is_Ercdedesc_Exist = db.GtEpercd.Any(a => a.Ercode != obj.Ercode && a.Erdesc.ToUpper().Trim().Replace(" ", "") == obj.Erdesc.ToUpper().Trim().Replace(" ", ""));
+                        if (is_Ercdedesc_Exist)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "ER Code Description is already Exists" };
+                        }
+
+                        GtEpercd Er_code = db.GtEpercd.Where(w => w.Ercode == obj.Ercode).FirstOrDefault();
+                        if (Er_code == null)
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "ER Code is not exist" };
+                        }
+
+                        Er_code.Erdesc = obj.Erdesc;
+                        Er_code.ActiveStatus = obj.ActiveStatus;
+                        Er_code.ModifiedBy = obj.UserID;
+                        Er_code.ModifiedOn = System.DateTime.Now;
+                        Er_code.ModifiedTerminal = obj.TerminalID;
+                        await db.SaveChangesAsync();
+
+                        GtEperpr Er_param = db.GtEperpr.Where(w => w.Ercode == obj.Ercode && w.ParameterId==obj.ParameterId).FirstOrDefault();
+                        Er_param.ParmPerc = obj.ParmPerc;
+                        Er_param.ParmAction = obj.ParmAction;
+                        Er_param.ParmDesc = obj.ParmDesc;
+                        Er_param.ParmValue = obj.ParmValue;
+                        Er_param.ActiveStatus = obj.ParamActiveStatus;
+                        Er_param.ModifiedBy = obj.UserID;
+                        Er_param.ModifiedOn = System.DateTime.Now;
+                        Er_param.ModifiedTerminal = obj.TerminalID;
+                        await db.SaveChangesAsync();
+                        dbContext.Commit();
+
+                        return new DO_ReturnParameter() { Status = true, Message = " ER Code Updated Successfully." };
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        #endregion ER Codes
+
+     
+    }
+}

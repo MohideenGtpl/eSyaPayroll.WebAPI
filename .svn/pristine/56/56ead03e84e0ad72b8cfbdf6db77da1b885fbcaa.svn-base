@@ -1,0 +1,201 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaPayroll.DO;
+using eSyaPayroll.IF;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaPayroll.WebAPI.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class EmployeeController : ControllerBase
+    {
+        private readonly IEmployeeRepository _EmployeeRepository;
+        public EmployeeController(IEmployeeRepository EmployeeRepository)
+        {
+            _EmployeeRepository = EmployeeRepository;
+        }
+
+        #region Employee Details Information
+
+        /// <summary>
+        /// Getting  Employee Class for drop down.
+        /// UI Reffered -Employee Details Info
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetEmployeeClassforCombo()
+        {
+            var emp_class = await _EmployeeRepository.GetEmployeeClassforCombo();
+            return Ok(emp_class);
+        }
+
+
+        /// <summary>
+        /// Getting  Employee Details Info.
+        /// UI Reffered -Fill Grid Employee Details Info
+        /// UI Param- Alphabet
+        /// </summary>
+        [HttpGet]
+        public IActionResult GetEmployeesInfobySuffix(string Alphabet)
+        {
+            var emp_info = _EmployeeRepository.GetEmployeesInfobySuffix(Alphabet);
+            return Ok(emp_info);
+        }
+
+        /// <summary>
+        /// Getting  Employee Details Info by Employee Number.
+        /// UI Reffered - Employee Details Info
+        /// UI Param- EmpNumber
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetEmployeeInfobyEmployeeNumber(int EmpNumber)
+        {
+            var emp_info = await _EmployeeRepository.GetEmployeeInfobyEmployeeNumber(EmpNumber);
+            return Ok(emp_info);
+        }
+        /// <summary>
+        /// Insert Or Update Employee Details Info.
+        /// UI Reffered -Insert or Update Employee Details Info
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateEmployeeInfo(DO_EmployeeInfo obj)
+        {
+            var msg = await _EmployeeRepository.InsertOrUpdateEmployeeInfo(obj);
+            return Ok(msg);
+
+        }
+        #endregion Employee Details Information
+
+        #region Employee Bank Information
+
+        /// <summary>
+        /// Getting  ERCode  for drop down.
+        /// UI Reffered -Employee Bank Info
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetERCodeforCombo()
+        {
+            var emp_Ercode = await _EmployeeRepository.GetERCodeforCombo();
+            return Ok(emp_Ercode);
+        }
+
+        /// <summary>
+        /// Getting  Employee Bank Info by Employee Number.
+        /// UI Reffered - Employee Bank Info
+        /// UI Param- EmpNumber
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetEmployeeBankInfobyEmpNumber(int EmpNumber)
+        {
+            var bank_info = await _EmployeeRepository.GetEmployeeBankInfobyEmpNumber(EmpNumber);
+            return Ok(bank_info);
+        }
+        /// <summary>
+        /// Insert Bank Info.
+        /// UI Reffered -Insert Bank Info
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertEmployeeBankInfo(DO_EmployeeBankInfo obj)
+        {
+            var msg = await _EmployeeRepository.InsertEmployeeBankInfo(obj);
+            return Ok(msg);
+
+        }
+
+        /// <summary>
+        /// Update Bank Info.
+        /// UI Reffered -Update Bank Info
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> UpdateEmployeeBankInfo(DO_EmployeeBankInfo obj)
+        {
+            var msg = await _EmployeeRepository.UpdateEmployeeBankInfo(obj);
+            return Ok(msg);
+
+        }
+        #endregion Employee Bank Information
+
+        #region Employee Salary Information
+
+        /// <summary>
+        /// Getting  Employee Salary Info by Employee Number.
+        /// UI Reffered - Employee Salary Info
+        /// UI Param- EmpNumber
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetEmployeeSalaryInfobyEmpNumber(int EmpNumber)
+        {
+            var sal_info = await _EmployeeRepository.GetEmployeeSalaryInfobyEmpNumber(EmpNumber);
+            return Ok(sal_info);
+        }
+        /// <summary>
+        /// Insert or Update Salary Info.
+        /// UI Reffered -Insert or Update Salary Info
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateEmployeeSalaryInfo(DO_EmployeeSalaryInfo obj)
+        {
+            var msg = await _EmployeeRepository.InsertOrUpdateEmployeeSalaryInfo(obj);
+            return Ok(msg);
+
+        }
+
+        #endregion Employee Salary Information
+
+        #region Employee Family Information
+
+        /// <summary>
+        /// Getting  Employee Family Info by Employee Number.
+        /// UI Reffered - Employee Family Info
+        /// UI Param- EmpNumber
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetEmployeeFamilyInfobyEmpNumber(int EmpNumber)
+        {
+            var family_info = await _EmployeeRepository.GetEmployeeFamilyInfobyEmpNumber(EmpNumber);
+            return Ok(family_info);
+        }
+        /// <summary>
+        /// Insert or Update Family Info.
+        /// UI Reffered -Insert or Update Family Info
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateEmployeeFamilyInfo(DO_EmployeeFamilyInfo obj)
+        {
+            var msg = await _EmployeeRepository.InsertOrUpdateEmployeeFamilyInfo(obj);
+            return Ok(msg);
+
+        }
+
+        #endregion Employee Family Information
+
+        #region Employee Educational Information
+
+        /// <summary>
+        /// Getting  Employee Educational Info by Employee Number.
+        /// UI Reffered - Employee Educational Info
+        /// UI Param- EmpNumber
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetEmployeeEducationInfobyEmpNumber(int EmpNumber)
+        {
+            var educational_info = await _EmployeeRepository.GetEmployeeEducationInfobyEmpNumber(EmpNumber);
+            return Ok(educational_info);
+        }
+        /// <summary>
+        /// Insert or Update Educational Info.
+        /// UI Reffered -Insert or Update Educational Info
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> InsertOrUpdateEmployeeEducationInfo(DO_EmployeeEducationInfo obj)
+        {
+            var msg = await _EmployeeRepository.InsertOrUpdateEmployeeEducationInfo(obj);
+            return Ok(msg);
+
+        }
+
+        #endregion Employee Educational Information
+    }
+}

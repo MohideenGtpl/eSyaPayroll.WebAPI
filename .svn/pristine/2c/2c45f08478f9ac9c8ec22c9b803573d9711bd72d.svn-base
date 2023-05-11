@@ -1,0 +1,160 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace eSyaPayroll.DO
+{
+   public class DO_EmployeeInfo
+    {
+        public int BusinessKey { get; set; }
+        public int EmployeeNumber { get; set; }
+        public string EmployeeId { get; set; }
+        public string BiometricId { get; set; }
+        public string Title { get; set; }
+        public string EmployeeName { get; set; }
+        public string Gender { get; set; }
+        public string MobileNumber { get; set; }
+        public bool ExemptedFromAttendance { get; set; }
+        public int WillingnessToWorkInShifts { get; set; }
+        public byte[] Photo { get; set; }
+        public string EmployeeStatus { get; set; }
+        public bool ActiveStatus { get; set; }
+        public string FormId { get; set; }
+        public int UserID { get; set; }
+        public string TerminalID { get; set; }
+
+        //properties for Employee classification
+        public int EmployeeGroup { get; set; }
+        public int EmployeeClass { get; set; }
+        public int EmployeePayCategory { get; set; }
+        public DateTime? DateProbationTill { get; set; }
+
+        //properties for Employee Status
+        public DateTime DateOfJoining { get; set; }
+        public DateTime? DateOfConfirmation { get; set; }
+        public DateTime? DateOfResignation { get; set; }
+        public DateTime? DateOfRelieving { get; set; }
+        public DateTime? DateOfTermination { get; set; }
+        public bool AnySuspension { get; set; }
+        public int CurrentDepartment { get; set; }
+        public int CurrentLocationPosted { get; set; }
+        public decimal CurrentBasic { get; set; }
+        public decimal CurrentGross { get; set; }
+    }
+
+    public class DO_EmployeeClass
+    {
+        public int EmployeeClass { get; set; }
+        public string ClassDesc { get; set; }
+        public int PeriodInMonths { get; set; }
+        public bool ActiveStatus { get; set; }
+    }
+
+    public class DO_ERCode
+    {
+        public int Ercode { get; set; }
+        public string Erdesc { get; set; }
+    }
+
+    public class DO_EmployeeBankInfo
+    {
+        public int BusinessKey { get; set; }
+        public int EmployeeNumber { get; set; }
+        public string AccountNumber { get; set; }
+        public int SalaryPaymentMode { get; set; }
+        public int BankCode { get; set; }
+        public string Ifsccode { get; set; }
+        public string BankBranch { get; set; }
+        public bool AccountStatus { get; set; }
+        public string FormId { get; set; }
+        public int UserID { get; set; }
+        public string TerminalID { get; set; }
+    }
+
+    public class DO_EmployeeSalaryInfo
+    {
+        public int BusinessKey { get; set; }
+        public int EmployeeNumber { get; set; }
+        public int Ercode { get; set; }
+        public DateTime EffectiveFrom { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime? EffectiveTill { get; set; }
+        public bool ActiveStatus { get; set; }
+        public string FormId { get; set; }
+        public int UserID { get; set; }
+        public string TerminalID { get; set; }
+    }
+
+    public class DO_EmployeeFamilyInfo
+    {
+        public int BusinessKey { get; set; }
+        public int EmployeeNumber { get; set; }
+        public string MaritalStatus { get; set; }
+        public string SpouseName { get; set; }
+        public int NoOfChildren { get; set; }
+        public string FatherName { get; set; }
+        public string MotherName { get; set; }
+        public string FormId { get; set; }
+        public int UserID { get; set; }
+        public string TerminalID { get; set; }
+    }
+
+    public class DO_EmployeeEducationInfo
+    {
+        public int BusinessKey { get; set; }
+        public int EmployeeNumber { get; set; }
+        public string EducationLevel { get; set; }
+        public string Institution { get; set; }
+        public string University { get; set; }
+        public decimal YearofPassing { get; set; }
+        public decimal PercentageofMarks { get; set; }
+        public string FormId { get; set; }
+        public int UserID { get; set; }
+        public string TerminalID { get; set; }
+    }
+
+    public class DO_EmployeePreviousJobInfo
+    {
+        public int BusinessKey { get; set; }
+        public int EmployeeNumber { get; set; }
+        public string Organization { get; set; }
+        public DateTime ServicePeriodFrom { get; set; }
+        public DateTime ServicePeriodTill { get; set; }
+        public string Designation { get; set; }
+        public string ReasonforLeaving { get; set; }
+        public string FormId { get; set; }
+        public int UserID { get; set; }
+        public string TerminalID { get; set; }
+    }
+
+    public class DO_EmployeeCurrentJobInfo
+    {
+        public int BusinessKey { get; set; }
+        public int EmployeeNumber { get; set; }
+        public DateTime FromDate { get; set; }
+        public DateTime? TillDate { get; set; }
+        public int Department { get; set; }
+        public int Designation { get; set; }
+        public string FunctionalReportingTo { get; set; }
+        public string AdministrativeReportingTo { get; set; }
+        public string FormId { get; set; }
+        public int UserID { get; set; }
+        public string TerminalID { get; set; }
+    }
+
+    public class DO_EmployeeFixedDeductionInfo
+    {
+        public int BusinessKey { get; set; }
+        public int EmployeeNumber { get; set; }
+        public int Ercode { get; set; }
+        public decimal Amount { get; set; }
+        public int NoOfinstallment { get; set; }
+        public decimal PaidAmount { get; set; }
+        public string ReferenceDetail { get; set; }
+        public string Status { get; set; }
+        public bool SkipinPayroll { get; set; }
+        public string FormId { get; set; }
+        public int UserID { get; set; }
+        public string TerminalID { get; set; }
+    }
+}

@@ -1,0 +1,359 @@
+﻿using eSyaPayroll.DL.Entities;
+using eSyaPayroll.DO;
+using eSyaPayroll.IF;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+
+namespace eSyaPayroll.DL.Repository
+{
+   public class EmployeeRepository:IEmployeeRepository
+    {
+        #region Employee Details Info
+
+        public async Task<List<DO_EmployeeClass>> GetEmployeeClassforCombo()
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    var ds = db.GtEbeemc
+                        .Where(w => w.ActiveStatus)
+                        .Select(r => new DO_EmployeeClass
+                        {
+                            EmployeeClass=r.EmployeeClass,
+                             ClassDesc=r.ClassDesc,
+
+                        }).OrderBy(o => o.ClassDesc).ToListAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<DO_EmployeeInfo> GetEmployeesInfobySuffix(string Alphabet)
+        {
+            try
+            {
+                using (eSyaEnterprise db = new eSyaEnterprise())
+                {
+                    List<GtEpyemh> emp_list = new List<GtEpyemh>();
+
+                    if (!string.IsNullOrEmpty(Alphabet))
+                    {
+
+                        emp_list = db.GtEpyemh.Where(x => x.EmployeeName.ToUpper().Trim().StartsWith(Alphabet.ToUpper().Trim())).ToList();
+                    }
+                    if (Alphabet == "All")
+                    {
+                        emp_list = db.GtEpyemh.ToList();
+                    }
+                    var result = emp_list.
+                     Select(x => new DO_EmployeeInfo
+                     {
+                         BusinessKey=x.BusinessKey,
+                         EmployeeNumber=x.EmployeeNumber,
+                         EmployeeId=x.EmployeeId,
+                         BiometricId=x.BiometricId,
+                         Title=x.Title,
+                         EmployeeName=x.EmployeeName,
+                         Gender=x.Gender,
+                         MobileNumber=x.MobileNumber,
+                         ExemptedFromAttendance=x.ExemptedFromAttendance,
+                         WillingnessToWorkInShifts=x.WillingnessToWorkInShifts,
+                         EmployeeStatus=x.EmployeeStatus,
+                         ActiveStatus = x.ActiveStatus,
+                         FormId = x.FormId
+                     }).OrderBy(x => x.EmployeeName).ToList();
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<DO_EmployeeInfo> GetEmployeeInfobyEmployeeNumber(int EmpNumber)
+        {
+            try
+            {
+                using (var db = new eSyaEnterprise())
+                {
+                    //var ds = db.GtEpyemh
+                    //    .Where(e => e.EmployeeNumber == EmpNumber)
+                    //    .Select(x => new DO_EmployeeInfo
+                    //    {
+                    //        BusinessKey = x.BusinessKey,
+                    //        EmployeeNumber = x.EmployeeNumber,
+                    //        EmployeeId = x.EmployeeId,
+                    //        BiometricId = x.BiometricId,
+                    //        Title = x.Title,
+                    //        EmployeeName = x.EmployeeName,
+                    //        Gender = x.Gender,
+                    //        MobileNumber = x.MobileNumber,
+                    //        ExemptedFromAttendance = x.ExemptedFromAttendance,
+                    //        WillingnessToWorkInShifts = x.WillingnessToWorkInShifts,
+                    //        EmployeeStatus = x.EmployeeStatus,
+                    //        ActiveStatus = x.ActiveStatus,
+                    //        FormId = x.FormId
+                    //    }).FirstOrDefaultAsync();
+
+   
+                    var ds = db.GtEpyemh.Where(x=>x.EmployeeNumber==EmpNumber).
+                   Join(db.GtEpyemc, u => u.EmployeeNumber, uir => uir.EmployeeNumber,
+                   (u, uir) => new { u, uir }).
+                   Join(db.GtEpyems, r => r.uir.EmployeeNumber, ro => ro.EmployeeNumber, (r, ro) => new { r, ro })
+                  .Select(m => new DO_EmployeeInfo
+                  {
+                      //Employee Details
+                      BusinessKey = m.r.u.BusinessKey,
+                      EmployeeNumber = m.r.u.EmployeeNumber,
+                      EmployeeId = m.r.u.EmployeeId,
+                      BiometricId = m.r.u.BiometricId,
+                      Title = m.r.u.Title,
+                      EmployeeName = m.r.u.EmployeeName,
+                      Gender = m.r.u.Gender,
+                      MobileNumber = m.r.u.MobileNumber,
+                      ExemptedFromAttendance = m.r.u.ExemptedFromAttendance,
+                      WillingnessToWorkInShifts = m.r.u.WillingnessToWorkInShifts,
+                      EmployeeStatus = m.r.u.EmployeeStatus,
+                      ActiveStatus = m.r.u.ActiveStatus,
+                      Photo = m.r.u.Photo,
+
+                      //Employee Classification
+                      EmployeeClass = m.r.uir.EmployeeClass,
+                      EmployeeGroup = m.r.uir.EmployeeGroup,
+                      EmployeePayCategory = m.r.uir.EmployeePayCategory,
+                      DateProbationTill = m.r.uir.DateProbationTill,
+
+                      //Employee Status
+                      DateOfJoining = m.ro.DateOfJoining,
+                      DateOfConfirmation = m.ro.DateOfConfirmation,
+                      DateOfResignation = m.ro.DateOfResignation,
+                      DateOfRelieving = m.ro.DateOfRelieving,
+                      DateOfTermination = m.ro.DateOfTermination,
+                      AnySuspension = m.ro.AnySuspension,
+                      CurrentDepartment = m.ro.CurrentDepartment,
+                      CurrentLocationPosted = m.ro.CurrentLocationPosted,
+                      CurrentBasic = m.ro.CurrentBasic,
+                      CurrentGross = m.ro.CurrentGross,
+                     }).FirstOrDefaultAsync();
+
+                    return await ds;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertOrUpdateEmployeeInfo(DO_EmployeeInfo obj)
+        {
+            try
+            {
+                if (obj.EmployeeNumber != 0)
+                {
+                    return await UpdateEmployeeInfo(obj);
+                }
+                else
+                {
+                    return await InsertIntoEmployeeInfo(obj);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<DO_ReturnParameter> InsertIntoEmployeeInfo(DO_EmployeeInfo obj)
+        {
+            using (eSyaEnterprise db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+
+                        GtEpyemh is_empIdExists = db.GtEpyemh.FirstOrDefault(emp => emp.EmployeeId.ToUpper().Replace(" ", "") == obj.EmployeeId.ToUpper().Replace(" ", ""));
+                        if (is_empIdExists == null)
+                        {
+                            int maxval = db.GtEpyemh.Select(e => e.EmployeeNumber).DefaultIfEmpty().Max();
+                            int Emp_number = maxval + 1;
+                            var emp_info = new GtEpyemh
+                            {
+                                BusinessKey = obj.BusinessKey,
+                                EmployeeNumber = Emp_number,
+                                EmployeeId = obj.EmployeeId,
+                                BiometricId = obj.BiometricId,
+                                Title = obj.Title,
+                                EmployeeName = obj.EmployeeName,
+                                Gender=obj.Gender,
+                                MobileNumber=obj.MobileNumber,
+                                ExemptedFromAttendance=obj.ExemptedFromAttendance,
+                                WillingnessToWorkInShifts=obj.WillingnessToWorkInShifts,
+                                Photo=obj.Photo,
+                                EmployeeStatus=obj.EmployeeStatus,
+                                ActiveStatus = obj.ActiveStatus,
+                                FormId = obj.FormId,
+                                CreatedBy = obj.UserID,
+                                CreatedOn = DateTime.Now,
+                                CreatedTerminal = obj.TerminalID
+                            };
+                            db.GtEpyemh.Add(emp_info);
+
+                            var emp_classification = new GtEpyemc
+                            {
+                                BusinessKey = obj.BusinessKey,
+                                EmployeeNumber = Emp_number,
+                                EmployeeGroup=obj.EmployeeGroup,
+                                EmployeeClass=obj.EmployeeClass,
+                                EmployeePayCategory=obj.EmployeePayCategory,
+                                DateProbationTill=obj.DateProbationTill,
+                                FormId = obj.FormId,
+                                CreatedBy = obj.UserID,
+                                CreatedOn = DateTime.Now,
+                                CreatedTerminal = obj.TerminalID
+                            };
+                            db.GtEpyemc.Add(emp_classification);
+
+                            var emp_status = new GtEpyems
+                            {
+                                BusinessKey = obj.BusinessKey,
+                                EmployeeNumber = Emp_number,
+                                DateOfJoining=obj.DateOfJoining,
+                                DateOfConfirmation=obj.DateOfConfirmation,
+                                DateOfResignation=obj.DateOfResignation,
+                                DateOfRelieving=obj.DateOfRelieving,
+                                DateOfTermination=obj.DateOfTermination,
+                                AnySuspension=obj.AnySuspension,
+                                CurrentDepartment=obj.CurrentDepartment,
+                                CurrentLocationPosted=obj.CurrentLocationPosted,
+                                CurrentBasic=obj.CurrentBasic,
+                                CurrentGross=obj.CurrentGross,
+                                FormId = obj.FormId,
+                                CreatedBy = obj.UserID,
+                                CreatedOn = DateTime.Now,
+                                CreatedTerminal = obj.TerminalID
+                            };
+                            db.GtEpyems.Add(emp_status);
+
+                            await db.SaveChangesAsync();
+                            dbContext.Commit();
+                            return new DO_ReturnParameter() { Status = true, EmpNumber = Emp_number, Message = "Employee Created Successfully." };
+                        }
+                        else
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Employee Id is already Exists try another one." };
+                        }
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+        public async Task<DO_ReturnParameter> UpdateEmployeeInfo(DO_EmployeeInfo obj)
+        {
+            using (eSyaEnterprise db = new eSyaEnterprise())
+            {
+                using (var dbContext = db.Database.BeginTransaction())
+                {
+
+                    try
+                    {
+                        GtEpyemh is_empIdExists = db.GtEpyemh.FirstOrDefault(emp => emp.EmployeeNumber != obj.EmployeeNumber && emp.EmployeeId.ToUpper().Replace(" ", "") == obj.EmployeeId.ToUpper().Replace(" ", ""));
+                        if (is_empIdExists == null)
+                        {
+                            var emp_info = db.GtEpyemh.FirstOrDefault(e => e.EmployeeNumber == obj.EmployeeNumber);
+                            if (obj != null)
+                            {
+                                    emp_info.EmployeeId = obj.EmployeeId;
+                                    emp_info.BiometricId = obj.BiometricId;
+                                    emp_info.Title = obj.Title;
+                                    obj.EmployeeName = obj.EmployeeName;
+                                    obj.Gender = obj.Gender;
+                                    obj.MobileNumber = obj.MobileNumber;
+                                    obj.ExemptedFromAttendance = obj.ExemptedFromAttendance;
+                                    obj.WillingnessToWorkInShifts = obj.WillingnessToWorkInShifts;
+                                    obj.Photo = obj.Photo;
+                                    obj.EmployeeStatus = obj.EmployeeStatus;
+                                    emp_info.ActiveStatus = obj.ActiveStatus;
+                                    emp_info.ModifiedBy = obj.UserID;
+                                    emp_info.ModifiedOn = DateTime.Now;
+                                    emp_info.ModifiedTerminal = obj.TerminalID;
+
+                                var emp_classification= db.GtEpyemc.FirstOrDefault(c => c.EmployeeNumber == obj.EmployeeNumber);
+                                    emp_classification.EmployeeGroup = obj.EmployeeGroup;
+                                    emp_classification.EmployeeClass = obj.EmployeeClass;
+                                    emp_classification.EmployeePayCategory = obj.EmployeePayCategory;
+                                    emp_classification.DateProbationTill = obj.DateProbationTill;
+                                    emp_classification.ModifiedBy = obj.UserID;
+                                    emp_classification.ModifiedOn = DateTime.Now;
+                                    emp_classification.ModifiedTerminal = obj.TerminalID;
+
+                                var emp_status = db.GtEpyems.FirstOrDefault(s => s.EmployeeNumber == obj.EmployeeNumber);
+                                    emp_status.DateOfJoining = obj.DateOfJoining;
+                                    emp_status.DateOfConfirmation = obj.DateOfConfirmation;
+                                    emp_status.DateOfResignation = obj.DateOfResignation;
+                                    emp_status.DateOfRelieving = obj.DateOfRelieving;
+                                    emp_status.DateOfTermination = obj.DateOfTermination;
+                                    emp_status.AnySuspension = obj.AnySuspension;
+                                    emp_status.CurrentDepartment = obj.CurrentDepartment;
+                                    emp_status.CurrentLocationPosted = obj.CurrentLocationPosted;
+                                    emp_status.CurrentBasic = obj.CurrentBasic;
+                                    emp_status.CurrentGross = obj.CurrentGross;
+                                    emp_status.ModifiedBy = obj.UserID;
+                                    emp_status.ModifiedOn = DateTime.Now;
+                                    emp_status.ModifiedTerminal = obj.TerminalID;
+
+                                await db.SaveChangesAsync();
+                                dbContext.Commit();
+                                return new DO_ReturnParameter() { Status = true, Message = "Employee Updated Successfully." };
+                            }
+                            else
+                            {
+                                return new DO_ReturnParameter() { Status = false, Message = "Couldn't find Employee Details." };
+                            }
+                        }
+                        else
+                        {
+                            return new DO_ReturnParameter() { Status = false, Message = "Employee Id is already Exists try another one." };
+                        }
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        dbContext.Rollback();
+                        throw new Exception(CommonMethod.GetValidationMessageFromException(ex));
+                    }
+                    catch (Exception ex)
+                    {
+                        dbContext.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
+
+      
+        #endregion Employee Details Info
+    }
+}

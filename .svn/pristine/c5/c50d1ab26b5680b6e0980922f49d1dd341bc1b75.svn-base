@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using eSyaPayroll.DO;
+using System.Threading.Tasks;
+namespace eSyaPayroll.IF
+{
+  public  interface IERCodesRepository
+    {
+        Task<List<DO_ERCodes>> GetAllERCodes();
+
+        Task<List<DO_ERCodes>> GetActiveERCodes();
+
+        Task<DO_ReturnParameter> InsertIntoERCodes(DO_ERCodes obj);
+
+        Task<DO_ReturnParameter> UpdateERCodes(DO_ERCodes obj);
+    }
+}

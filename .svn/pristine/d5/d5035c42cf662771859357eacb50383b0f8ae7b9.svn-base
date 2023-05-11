@@ -1,0 +1,17 @@
+﻿using eSyaPayroll.DO;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace eSyaPayroll.IF
+{
+   public interface ICommonDataRepository
+    {
+        Task<List<DO_ApplicationCodes>> GetApplicationCodesByCodeTypeList(List<int> l_codeType);
+
+         Task<List<DO_BusinessLocation>> GetBusinessKeys();
+
+        Task<List<DO_Country>> GetActiveCountries();
+    }
+}

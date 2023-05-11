@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using eSyaPayroll.IF;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace eSyaPayroll.WebAPI.Controllers
+{
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class CommonDataController : ControllerBase
+    {
+        private readonly ICommonDataRepository _CommonDataRepository;
+        public CommonDataController(ICommonDataRepository CommonDataRepository)
+        {
+            _CommonDataRepository = CommonDataRepository;
+        }
+        /// <summary>
+        /// Getting  Business Keys.
+        /// UI Reffered - Employee Details Info
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetBusinessKeys()
+        {
+            var bkeys = await _CommonDataRepository.GetBusinessKeys();
+            return Ok(bkeys);
+        }
+        /// <summary>
+        /// Getting  Get Application Codes By CodeTypeList.
+        /// UI Reffered - Employee Details Info
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> GetApplicationCodesByCodeTypeList(List<int> l_codeType)
+        {
+            var ds = await _CommonDataRepository.GetApplicationCodesByCodeTypeList(l_codeType);
+            return Ok(ds);
+        }
+    }
+}
